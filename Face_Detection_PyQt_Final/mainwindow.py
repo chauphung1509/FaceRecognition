@@ -6,7 +6,7 @@
 import sys
 from PyQt6.uic import loadUi
 from PyQt6.QtCore import pyqtSlot
-from PyQt6.QtWidgets import QApplication, QDialog
+from PyQt6.QtWidgets import QApplication, QDialog, QMessageBox
 import resource
 # from model import Model
 from out_window import Ui_OutputDialog
@@ -34,19 +34,28 @@ class Ui_Dialog(QDialog):
         Called when the user presses the Run button
         """
         print("Clicked Run")
-        self.refreshAll()
-        print(self.Videocapture_)
-        ui.hide()  # hide the main window
-        self.outputWindow_()  # Create and open new output window
+        try:
+            self.refreshAll()
+            print(f"Camera source: {self.Videocapture_}")
+            ui.hide()  # hide the main window
+            self.outputWindow_()  # Create and open new output window
+        except Exception as e:
+            print(f"Lỗi khi khởi động ứng dụng: {e}")
+            QMessageBox.critical(self, "Lỗi", f"Lỗi khi khởi động ứng dụng: {e}")
 
     def outputWindow_(self):
         """
         Created new window for vidual output of the video in GUI
         """
-        self._new_window = Ui_OutputDialog()
-        self._new_window.show()
-        self._new_window.startVideo(self.Videocapture_)
-        print("Video Played")
+        try:
+            self._new_window = Ui_OutputDialog()
+            self._new_window.show()
+            self._new_window.startVideo(self.Videocapture_)
+            print("Video Played")
+        except Exception as e:
+            print(f"Lỗi khi mở cửa sổ đầu ra: {e}")
+            QMessageBox.critical(self, "Lỗi", f"Lỗi khi mở cửa sổ đầu ra: {e}")
+            ui.show()  # Hiển thị lại cửa sổ chính nếu có lỗi
 
 
 if __name__ == "__main__":
